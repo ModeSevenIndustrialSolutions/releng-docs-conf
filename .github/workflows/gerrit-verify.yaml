@@ -114,9 +114,14 @@ jobs:
   # ===================================================================
   actionlint:
     name: 'Actionlint'
+    # The !cancelled() guard is required: without a status-check function
+    # (always/success/failure/cancelled) in the expression, GitHub will
+    # auto-skip this job whenever clear-vote is skipped, without ever
+    # evaluating the rest of the condition.
     if: >-
-      needs.clear-vote.result == 'success'
-      || needs.clear-vote.result == 'skipped'
+      !cancelled()
+      && (needs.clear-vote.result == 'success'
+          || needs.clear-vote.result == 'skipped')
     needs: clear-vote
     runs-on: ubuntu-latest
     permissions:
@@ -152,8 +157,9 @@ jobs:
   pre-commit:
     name: 'Pre-commit'
     if: >-
-      needs.clear-vote.result == 'success'
-      || needs.clear-vote.result == 'skipped'
+      !cancelled()
+      && (needs.clear-vote.result == 'success'
+          || needs.clear-vote.result == 'skipped')
     needs: clear-vote
     runs-on: ubuntu-latest
     permissions:
@@ -192,8 +198,9 @@ jobs:
   repository-metadata:
     name: "Repository Metadata"
     if: >-
-      needs.clear-vote.result == 'success'
-      || needs.clear-vote.result == 'skipped'
+      !cancelled()
+      && (needs.clear-vote.result == 'success'
+          || needs.clear-vote.result == 'skipped')
     needs: clear-vote
     runs-on: ubuntu-latest
     permissions:
@@ -243,8 +250,9 @@ jobs:
   python-build:
     name: 'Python Build'
     if: >-
-      needs.clear-vote.result == 'success'
-      || needs.clear-vote.result == 'skipped'
+      !cancelled()
+      && (needs.clear-vote.result == 'success'
+          || needs.clear-vote.result == 'skipped')
     needs: clear-vote
     runs-on: 'ubuntu-latest'
     outputs:
